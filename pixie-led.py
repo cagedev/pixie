@@ -50,7 +50,7 @@ def index():
 
 
 @app.route('/pixie/api/v1.0/upload_image', methods=['POST'])
-def upload_image()
+def upload_image():
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
         uploaded_file.save(uploaded_file.filename)
