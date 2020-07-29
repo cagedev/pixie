@@ -45,6 +45,7 @@ options.parallel = 1
 options.hardware_mapping = 'adafruit-hat'
 options.disable_hardware_pulsing = True
 options.gpio_slowdown = 3
+options.drop_privileges = False
 
 matrix = RGBMatrix(options = options)
 offscreen_canvas = matrix.CreateFrameCanvas()
