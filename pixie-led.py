@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 import sys, time
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
@@ -43,6 +43,18 @@ def show_image():
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
     return jsonify({'success': True, 'image_file': image_file})
 
+
+@app.route('/pixie/upload', methods=['GET'])
+def index():
+    return render_template('upload.html')
+
+
+@app.route('/pixie/api/v1.0/upload_image', methods=['POST'])
+def upload_image()
+    uploaded_file = request.files['file']
+    if uploaded_file.filename != '':
+        uploaded_file.save(uploaded_file.filename)
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
