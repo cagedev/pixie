@@ -89,12 +89,11 @@ def upload_image():
         file_ext = os.path.splitext(filename)[1]
         if file_ext not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
-        # with open(filename, 'wb') as f:
-        #     f.write(request.files.data)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-        uploaded_file.close()
-    return jsonify({"succes": True})
-    # return redirect(url_for('index'))
+        uploaded_file.close() # Permission denied if you don't close the file...
+    # return jsonify({"succes": True})
+    return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
