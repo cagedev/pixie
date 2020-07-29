@@ -89,9 +89,10 @@ def upload_image():
         file_ext = os.path.splitext(filename)[1]
         if file_ext not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
-        with open('test_data', 'wb') as f:
-            f.write(request.data)
-        # uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        # with open(filename, 'wb') as f:
+        #     f.write(request.files.data)
+        uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        uploaded_file.close()
     return jsonify({"succes": True})
     # return redirect(url_for('index'))
 
