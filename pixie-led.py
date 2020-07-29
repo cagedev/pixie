@@ -112,7 +112,7 @@ def show_sprite():
         h = height
 
     image = Image.open(filename)
-    image.crop(x, y, w, h)
+    image.crop( (x, y, w, h) )
     # just in case it's bigger than 32x32
     image.thumbnail((32, 32), Image.ANTIALIAS)
     image = image.convert("RGB")
