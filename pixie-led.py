@@ -114,8 +114,8 @@ def show_sprite():
     image = Image.open(filename)
     cropped_image = image.crop( (x1, y1, x2, y2) )
     # just in case it's bigger than 32x32
-    # cropped_image.thumbnail((32, 32), Image.ANTIALIAS)
-    cropped_image = image.convert("RGB")
+    cropped_image.thumbnail((32, 32), Image.ANTIALIAS)
+    cropped_image = cropped_image.convert("RGB")
     offscreen_canvas.SetImage(cropped_image, unsafe=False)
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
