@@ -1,11 +1,40 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request
-import sys, time
+from flask import Flask, jsonify, request, render_template, redirect, url_for
+from werkzeug.utils import secure_filename
+import sys, time, os
+
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 # max 10MB
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
+app.config['UPLOAD_PATH'] = '/home/ubuntu/pixie/cache'
+
+
+# prevent connection being reset during file upload ?
+# from : https://www.cocept.io/blog/development/flask-file-upload-connection-reset/
+# from werkzeug.wsgi import LimitedStream
+# class StreamConsumingMiddleware(object):
+
+#     def __init__(self, app):
+#         self.app = app
+
+#     def __call__(self, environ, start_response):
+#         stream = LimitedStream(environ['wsgi.input'],
+#                                int(environ['CONTENT_LENGTH'] or 0))
+#         environ['wsgi.input'] = stream
+#         app_iter = self.app(environ, start_response)
+#         try:
+#             stream.exhaust()
+#             for event in app_iter:
+#                 yield event
+#         finally:
+#             if hasattr(app_iter, 'close'):
+#                 app_iter.close()
+# app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
+
 
 # Configuration for the matrix
 options = RGBMatrixOptions()
@@ -14,6 +43,9 @@ options.cols = 32
 options.chain_length = 1
 options.parallel = 1
 options.hardware_mapping = 'adafruit-hat'
+options.disable_hardware_pulsing = True
+options.gpio_slowdown = 3
+options.drop_privileges = False
 
 matrix = RGBMatrix(options = options)
 offscreen_canvas = matrix.CreateFrameCanvas()
@@ -42,6 +74,25 @@ def show_image():
     offscreen_canvas.SetImage(image, unsafe=False)
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
     return jsonify({'success': True, 'image_file': image_file})
+
+
+@app.route('/pixie/upload', methods=['GET', 'POST'])
+def index():
+    return render_template('upload.html')
+
+
+@app.route('/pixie/api/v1.0/upload_image', methods=['POST'])
+def upload_image():
+    uploaded_file = request.files['file']
+    filename = secure_filename(uploaded_file.filename)
+    if filename != '':
+        file_ext = os.path.splitext(filename)[1]
+        if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+            abort(400)
+        uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        uploaded_file.close() # Permission denied if you don't close the file...
+    # return jsonify({"succes": True})
+    return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
 
 
 if __name__ == '__main__':
