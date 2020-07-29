@@ -89,22 +89,22 @@ def show_sprite():
     # bad default?
     filename = request.args.get('filename', default='./cache/sf-portraits.png')
 
-    margin_top = request.args.get('margin-top', default=1)
-    margin_left = request.args.get('margin-left', default=0)
-    border_bottom = request.args.get('border-bottom', default=5)
-    border_right = request.args.get('border-right', default=5)
-    width = request.args.get('width', default=48)  # should be 32?
-    height = request.args.get('height', default=64)  # should be 32?
+    margin_top = int(request.args.get('margin-top', default=1))
+    margin_left = int(request.args.get('margin-left', default=0))
+    border_bottom = int(request.args.get('border-bottom', default=5))
+    border_right = int(request.args.get('border-right', default=5))
+    width = int(request.args.get('width', default=48))  # should be 32?
+    height = int(request.args.get('height', default=64))  # should be 32?
 
-    column = request.args.get('column', default=0)
-    row = request.args.get('row', default=0)
+    column = int(request.args.get('column', default=0))
+    row = int(request.args.get('row', default=0))
 
     # filename, x, y, w, h
     if 'x' in request.args and 'y' in request.args and 'w' in request.args and 'h' in request.args:
-        x = request.args.get('x')
-        y = request.args.get('y')
-        w = request.args.get('w')
-        h = request.args.get('h')
+        x = int(request.args.get('x'))
+        y = int(request.args.get('y'))
+        w = int(request.args.get('w'))
+        h = int(request.args.get('h'))
     else:
         x = margin_left + (width + border_right) * column
         y = margin_top + (height + border_bottom) * row
