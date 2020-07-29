@@ -45,9 +45,10 @@ options.cols = 32
 options.chain_length = 1
 options.parallel = 1
 options.hardware_mapping = 'adafruit-hat'
-options.disable_hardware_pulsing = False
-options.pwm_lsb_nanoseconds = 300
-options.gpio_slowdown = 2
+options.disable_hardware_pulsing = False #default: False
+options.pwm_bits = 1 # default: 11
+options.pwm_lsb_nanoseconds = 300 # default: 130
+options.gpio_slowdown = 3 #default: 2
 options.drop_privileges = False
 
 matrix = RGBMatrix(options=options)
