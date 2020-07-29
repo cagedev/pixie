@@ -1,11 +1,16 @@
 #!flask/bin/python
 from flask import Flask, jsonify, request, render_template, redirect, url_for
+from werkzeug.utils import secure_filename
 import sys, time
+
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 # max 10MB
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
+app.config['UPLOAD_PATH'] = 'cache'
 
 
 # prevent connection being reset during file upload ?
@@ -76,8 +81,12 @@ def index():
 @app.route('/pixie/api/v1.0/upload_image', methods=['POST'])
 def upload_image():
     uploaded_file = request.files['file']
-    if uploaded_file.filename != '':
-        uploaded_file.save(uploaded_file.filename)
+    filename = secure_filename(uploaded_file.filename)
+    if filename != '':
+        file_ext = os.path.splitext(filename)[1]
+        if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+            abort(400)
+        uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
     return jsonify(request.files)
     # return redirect(url_for('index'))
 
