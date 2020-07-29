@@ -82,7 +82,7 @@ def show_image():
 
 
 @app.route('/pixie/api/v1.0/show_sprite', methods=['GET'])
-def show_image():
+def show_sprite():
     global matrix, offscreen_canvas
 
     # filename, margin-top, margin-left, padding-top, padding-left, column, row,
