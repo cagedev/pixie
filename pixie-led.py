@@ -92,7 +92,7 @@ def upload_image():
         with open('test_data', 'wb') as f:
             f.write(request.data)
         # uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-    return jsonify(request.files)
+    return jsonify({"succes": True})
     # return redirect(url_for('index'))
 
 if __name__ == '__main__':
