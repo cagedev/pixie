@@ -54,7 +54,8 @@ def upload_image():
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
         uploaded_file.save(uploaded_file.filename)
-    return redirect(url_for('index'))
+    return jsonify(request.files)
+    # return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
