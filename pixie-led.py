@@ -1,7 +1,7 @@
 #!flask/bin/python
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
-import sys, time
+import sys, time, os
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
