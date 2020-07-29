@@ -103,8 +103,8 @@ def show_sprite():
     if 'x' in request.args and 'y' in request.args and 'w' in request.args and 'h' in request.args:
         x = int(request.args.get('x'))
         y = int(request.args.get('y'))
-        w = int(request.args.get('w'))
-        h = int(request.args.get('h'))
+        w = int(request.args.get('w')) + x
+        h = int(request.args.get('h')) + y
     else:
         x = margin_left + (width + border_right) * column
         y = margin_top + (height + border_bottom) * row
