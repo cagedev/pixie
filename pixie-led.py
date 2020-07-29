@@ -10,25 +10,25 @@ app = Flask(__name__)
 
 # prevent connection being reset during file upload ?
 # from : https://www.cocept.io/blog/development/flask-file-upload-connection-reset/
-from werkzeug.wsgi import LimitedStream
-class StreamConsumingMiddleware(object):
+# from werkzeug.wsgi import LimitedStream
+# class StreamConsumingMiddleware(object):
 
-    def __init__(self, app):
-        self.app = app
+#     def __init__(self, app):
+#         self.app = app
 
-    def __call__(self, environ, start_response):
-        stream = LimitedStream(environ['wsgi.input'],
-                               int(environ['CONTENT_LENGTH'] or 0))
-        environ['wsgi.input'] = stream
-        app_iter = self.app(environ, start_response)
-        try:
-            stream.exhaust()
-            for event in app_iter:
-                yield event
-        finally:
-            if hasattr(app_iter, 'close'):
-                app_iter.close()
-app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
+#     def __call__(self, environ, start_response):
+#         stream = LimitedStream(environ['wsgi.input'],
+#                                int(environ['CONTENT_LENGTH'] or 0))
+#         environ['wsgi.input'] = stream
+#         app_iter = self.app(environ, start_response)
+#         try:
+#             stream.exhaust()
+#             for event in app_iter:
+#                 yield event
+#         finally:
+#             if hasattr(app_iter, 'close'):
+#                 app_iter.close()
+# app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
 
 
 # Configuration for the matrix
