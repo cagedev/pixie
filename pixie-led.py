@@ -10,7 +10,7 @@ from PIL import Image
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 # max 10MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
-app.config['UPLOAD_PATH'] = 'cache'
+app.config['UPLOAD_PATH'] = '/app/cache'
 
 
 # prevent connection being reset during file upload ?
