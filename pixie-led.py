@@ -47,7 +47,7 @@ options.parallel = 1
 options.hardware_mapping = 'adafruit-hat'
 options.disable_hardware_pulsing = False #default: False
 options.pwm_bits = 8 # default: 11
-options.pwm_lsb_nanoseconds = 1000 # default: 130
+options.pwm_lsb_nanoseconds = 200 # default: 130
 options.gpio_slowdown = 3 #default: 2
 options.drop_privileges = False
 
