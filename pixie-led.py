@@ -112,11 +112,11 @@ def show_sprite():
         h = height
 
     image = Image.open(filename)
-    image.crop( (x, y, w, h) )
+    cropped_image = image.crop( (x, y, w, h) )
     # just in case it's bigger than 32x32
-    image.thumbnail((32, 32), Image.ANTIALIAS)
-    image = image.convert("RGB")
-    offscreen_canvas.SetImage(image, unsafe=False)
+    cropped_image.thumbnail((32, 32), Image.ANTIALIAS)
+    cropped_image = image.convert("RGB")
+    offscreen_canvas.SetImage(cropped_image, unsafe=False)
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
     return jsonify({'success': True, 'filename': filename, 'x': x, 'y': y, 'w': w, 'h': h})
