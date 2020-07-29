@@ -97,7 +97,7 @@ def show_image():
     height = request.args.get('height', default=64)  # should be 32?
 
     column = request.args.get('column', default=0)
-    row = = request.args.get('row', default=0)
+    row = request.args.get('row', default=0)
 
     # filename, x, y, w, h
     if 'x' in request.args and 'y' in request.args and 'w' in request.args and 'h' in request.args:
