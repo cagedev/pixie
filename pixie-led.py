@@ -44,7 +44,7 @@ def show_image():
     return jsonify({'success': True, 'image_file': image_file})
 
 
-@app.route('/pixie/upload', methods=['GET'])
+@app.route('/pixie/upload', methods=['GET', 'POST'])
 def index():
     return render_template('upload.html')
 
