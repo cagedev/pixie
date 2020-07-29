@@ -1,14 +1,16 @@
 #!flask/bin/python
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
-import sys, time, os
+import sys
+import time
+import os
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 # max 10MB
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # max 10MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = '/home/ubuntu/pixie/cache'
 
@@ -47,10 +49,13 @@ options.disable_hardware_pulsing = True
 options.gpio_slowdown = 3
 options.drop_privileges = False
 
-matrix = RGBMatrix(options = options)
+matrix = RGBMatrix(options=options)
 offscreen_canvas = matrix.CreateFrameCanvas()
 
-#@app.route('')
+# @app.route('')
+
+# API Routes
+
 
 @app.route('/pixie/api/v1.0/fill', methods=['GET'])
 def set_color():
@@ -76,9 +81,45 @@ def show_image():
     return jsonify({'success': True, 'image_file': image_file})
 
 
-@app.route('/pixie/upload', methods=['GET', 'POST'])
-def index():
-    return render_template('upload.html')
+@app.route('/pixie/api/v1.0/show_sprite', methods=['GET'])
+def show_image():
+    global matrix, offscreen_canvas
+
+    # filename, margin-top, margin-left, padding-top, padding-left, column, row,
+    # bad default?
+    filename = request.args.get('filename', default='./cache/sf-portraits.png')
+
+    margin_top = request.args.get('margin-top', default=1)
+    margin_left = request.args.get('margin-left', default=0)
+    border_bottom = request.args.get('border-bottom', default=5)
+    border_right = request.args.get('border-right', default=5)
+    width = request.args.get('width', default=48)  # should be 32?
+    height = request.args.get('height', default=64)  # should be 32?
+
+    column = request.args.get('column', default=0)
+    row = = request.args.get('row', default=0)
+
+    # filename, x, y, w, h
+    if 'x' in request.args and 'y' in request.args and 'w' in request.args and 'h' in request.args:
+        x = request.args.get('x')
+        y = request.args.get('y')
+        w = request.args.get('w')
+        h = request.args.get('h')
+    else:
+        x = margin_left + (width + border_right) * column
+        y = margin_top + (height + border_bottom) * row
+        w = width
+        h = height
+
+    image = Image.open(filename)
+    image.crop(x, y, w, h)
+    # just in case it's bigger than 32x32
+    image.thumbnail((32, 32), Image.ANTIALIAS)
+    image = image.convert("RGB")
+    offscreen_canvas.SetImage(image, unsafe=False)
+    offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+
+    return jsonify({'success': True, 'filename': filename, 'x': x, 'y': y, 'w': w, 'h': h})
 
 
 @app.route('/pixie/api/v1.0/upload_image', methods=['POST'])
@@ -90,9 +131,17 @@ def upload_image():
         if file_ext not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-        uploaded_file.close() # Permission denied if you don't close the file...
+        # Permission denied if you don't close the file?
+        uploaded_file.close()
     # return jsonify({"succes": True})
+    # don't do this to allow multiple?
     return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
+
+
+# WWW Routes
+@app.route('/pixie/upload', methods=['GET', 'POST'])
+def index():
+    return render_template('upload.html')
 
 
 if __name__ == '__main__':
