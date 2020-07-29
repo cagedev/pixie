@@ -101,25 +101,25 @@ def show_sprite():
 
     # filename, x, y, w, h
     if 'x' in request.args and 'y' in request.args and 'w' in request.args and 'h' in request.args:
-        x = int(request.args.get('x'))
-        y = int(request.args.get('y'))
-        w = int(request.args.get('w')) + x
-        h = int(request.args.get('h')) + y
+        x1 = int(request.args.get('x'))
+        y1 = int(request.args.get('y'))
+        x2 = int(request.args.get('w')) + x
+        y2 = int(request.args.get('h')) + y
     else:
-        x = margin_left + (width + border_right) * column
-        y = margin_top + (height + border_bottom) * row
-        w = x + width
-        h = y + height
+        x1 = margin_left + (width + border_right) * column
+        y1 = margin_top + (height + border_bottom) * row
+        x2 = x1 + width
+        y2 = y1 + height
 
     image = Image.open(filename)
-    cropped_image = image.crop( (x, y, w, h) )
+    cropped_image = image.crop( (x1, y1, x2, y2) )
     # just in case it's bigger than 32x32
     # cropped_image.thumbnail((32, 32), Image.ANTIALIAS)
     cropped_image = image.convert("RGB")
     offscreen_canvas.SetImage(cropped_image, unsafe=False)
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
-    return jsonify({'success': True, 'filename': filename, 'x': x, 'y': y, 'w': w, 'h': h})
+    return jsonify({'success': True, 'filename': filename, 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2})
 
 
 @app.route('/pixie/api/v1.0/upload_image', methods=['POST'])
