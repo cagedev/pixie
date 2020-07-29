@@ -108,8 +108,8 @@ def show_sprite():
     else:
         x = margin_left + (width + border_right) * column
         y = margin_top + (height + border_bottom) * row
-        w = width
-        h = height
+        w = x + width
+        h = y + height
 
     image = Image.open(filename)
     cropped_image = image.crop( (x, y, w, h) )
