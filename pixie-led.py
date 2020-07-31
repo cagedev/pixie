@@ -142,8 +142,12 @@ def upload_image():
 
 # WWW Routes
 @app.route('/pixie/upload', methods=['GET', 'POST'])
-def index():
+def upload():
     return render_template('upload.html')
+
+@app.route('/pixie/list', method=['GET'])
+def show_list():
+    return render_template('list.html')
 
 
 if __name__ == '__main__':
