@@ -146,12 +146,12 @@ def upload():
     return render_template('upload.html')
 
 
-@app.route('/pixie/list', method=['GET'])
+@app.route('/pixie/list', methods=['GET'])
 def show_list():
     return render_template('list.html', files=['a', 'b', 'c'])
 
 
-@app.route('/pixie/queue', method=['GET'])
+@app.route('/pixie/queue', methods=['GET'])
 def show_queue():
     return render_template('queue.html')
 
