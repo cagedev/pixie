@@ -45,10 +45,10 @@ options.cols = 32
 options.chain_length = 1
 options.parallel = 1
 options.hardware_mapping = 'adafruit-hat'
-options.disable_hardware_pulsing = False #default: False
-options.pwm_bits = 8 # default: 11
-options.pwm_lsb_nanoseconds = 200 # default: 130
-options.gpio_slowdown = 3 #default: 2
+options.disable_hardware_pulsing = False  # default: False
+options.pwm_bits = 8  # default: 11
+options.pwm_lsb_nanoseconds = 200  # default: 130
+options.gpio_slowdown = 3  # default: 2
 options.drop_privileges = False
 
 matrix = RGBMatrix(options=options)
@@ -114,7 +114,7 @@ def show_sprite():
         y2 = y1 + height
 
     image = Image.open(filename)
-    cropped_image = image.crop( (x1, y1, x2, y2) )
+    cropped_image = image.crop((x1, y1, x2, y2))
     # just in case it's bigger than 32x32
     cropped_image.thumbnail((32, 32), Image.ANTIALIAS)
     cropped_image = cropped_image.convert("RGB")
@@ -145,9 +145,15 @@ def upload_image():
 def upload():
     return render_template('upload.html')
 
+
 @app.route('/pixie/list', method=['GET'])
 def show_list():
-    return render_template('list.html')
+    return render_template('list.html', files=['a', 'b', 'c'])
+
+
+@app.route('/pixie/queue', method=['GET'])
+def show_list():
+    return render_template('queue.html')
 
 
 if __name__ == '__main__':
