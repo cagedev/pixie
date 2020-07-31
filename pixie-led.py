@@ -152,7 +152,7 @@ def show_list():
 
 
 @app.route('/pixie/queue', method=['GET'])
-def show_list():
+def show_queue():
     return render_template('queue.html')
 
 
