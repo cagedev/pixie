@@ -16,29 +16,6 @@ app.config['UPLOAD_PATH'] = '/home/ubuntu/pixie/cache'
 app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 
 
-# prevent connection being reset during file upload ?
-# from : https://www.cocept.io/blog/development/flask-file-upload-connection-reset/
-# from werkzeug.wsgi import LimitedStream
-# class StreamConsumingMiddleware(object):
-
-#     def __init__(self, app):
-#         self.app = app
-
-#     def __call__(self, environ, start_response):
-#         stream = LimitedStream(environ['wsgi.input'],
-#                                int(environ['CONTENT_LENGTH'] or 0))
-#         environ['wsgi.input'] = stream
-#         app_iter = self.app(environ, start_response)
-#         try:
-#             stream.exhaust()
-#             for event in app_iter:
-#                 yield event
-#         finally:
-#             if hasattr(app_iter, 'close'):
-#                 app_iter.close()
-# app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
-
-
 # Configuration for the matrix
 options = RGBMatrixOptions()
 options.rows = 32
@@ -55,11 +32,8 @@ options.drop_privileges = False
 matrix = RGBMatrix(options=options)
 offscreen_canvas = matrix.CreateFrameCanvas()
 
-# @app.route('')
 
 # API Routes
-
-
 @app.route('/pixie/api/v1.0/fill', methods=['GET'])
 def set_color():
     global offscreen_canvas, matrix
@@ -89,7 +63,6 @@ def show_sprite():
     global matrix, offscreen_canvas
 
     # filename, margin-top, margin-left, padding-top, padding-left, column, row,
-    # bad default?
     filename = request.args.get('filename', default='./cache/sf-portraits.png')
 
     margin_top = int(request.args.get('margin-top', default=1))

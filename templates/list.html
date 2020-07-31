@@ -8,7 +8,7 @@
 
     <ol>
       {%for f in files%} 
-        <li>{{ f }}</li> 
+        <li><a href="./api/v1.0/show_image?filename={{f}}">{{ f }} </a></li>
       {%endfor%}
     </ol> 
 
