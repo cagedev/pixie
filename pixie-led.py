@@ -151,7 +151,8 @@ def upload():
 def show_list():
     files = []
     for directory in app.config['IMAGE_FILE_DIRS']:
-        files.extend(os.listdir(directory))
+        files.extend([os.path.join(directory, file)
+                      for file in os.listdir(directory)])
     return render_template('list.html', files=files)
 
 
