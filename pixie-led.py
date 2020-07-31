@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # max 10MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = '/home/ubuntu/pixie/cache'
+app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 
 
 # prevent connection being reset during file upload ?
@@ -148,7 +149,10 @@ def upload():
 
 @app.route('/pixie/list', methods=['GET'])
 def show_list():
-    return render_template('list.html', files=['a', 'b', 'c'])
+    files = []
+    for directory in app.config['IMAGE_FILE_DIRS']:
+        files.extend(os.listdir(directory))
+    return render_template('list.html', files=files)
 
 
 @app.route('/pixie/queue', methods=['GET'])
