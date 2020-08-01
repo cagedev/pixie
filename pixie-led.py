@@ -1,22 +1,26 @@
 #!flask/bin/python
 from flask import Flask, jsonify, request, render_template, redirect, url_for, abort
 from werkzeug.utils import secure_filename
-import sys
-import time
-import os
+import sys, time, os
+import redis
+from rq import Queue
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 
 
+# Config for Flask
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # max 10MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = '/home/ubuntu/pixie/cache'
 app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 
+# Config for Redis
+r = redis.Redis()
+q = Queue(connection)
 
-# Configuration for the matrix
+# Config for RGBMatrix
 options = RGBMatrixOptions()
 options.rows = 32
 options.cols = 32
@@ -131,7 +135,20 @@ def show_list():
 
 @app.route('/pixie/queue', methods=['GET'])
 def show_queue():
-    return render_template('queue.html')
+    if request.args.get('n'):
+        job = q.enqueue(fake_task, int(request.args.get('n')))
+        return f"{job.enqueued_at}: job {job.id} added to queue. {len(q)} tasks in queue."
+    else:
+        return f"{len(q)} tasks in queue."
+    # return render_template('queue.html')
+
+
+# Utility functions
+def fake_task(n):
+    print(f"Task started. Delaying {n} seconds")
+    time.sleep(n)
+    print(" Complete")
+    pass
 
 
 if __name__ == '__main__':
