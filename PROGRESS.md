@@ -8,9 +8,8 @@ Hardware: Raspberry pi 3 (1GB) with Adafruit RGBHat
 
 ### rq worker
 
-`sudo sysctl status rqworker@1`
-
 ```bash
+$ sudo sysctl status rqworker@1
 ● rqworker@1.service - RQ Worker Number 1
      Loaded: loaded (/etc/systemd/system/rqworker@.service; disabled; vendor preset: enabled)
      Active: active (running) since Sat 2020-08-01 19:56:02 UTC; 328ms ago
@@ -22,12 +21,13 @@ Hardware: Raspberry pi 3 (1GB) with Adafruit RGBHat
 
 Seems fine
 
-`rqinfo`
-
+```bash
+$ rqinfo
 default      |███████ 7
 1 queues, 7 jobs total
 0 workers, 1 queues
 Updated: 2020-08-01 19:56:58.238937
+```
 
 Why zero workers...?
 
