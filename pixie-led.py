@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import sys, time, os
 import redis
 from rq import Queue
+import rq_dashboard
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
@@ -19,6 +20,8 @@ app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 # Config for Redis
 r = redis.Redis()
 q = Queue(connection=r)
+app.config.from_object(rq_dashboard.default_settings)
+app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
 
 # Config for RGBMatrix
 options = RGBMatrixOptions()
