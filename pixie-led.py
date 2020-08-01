@@ -53,6 +53,15 @@ def set_color():
     return jsonify({"success": True, 'r': r, 'g': g, 'b': b})
 
 
+@app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
+def show_gif():
+    if request.args.get('filename'):
+        job = q.enqueue(panel_gif, request.args.get('filename'))
+        return f"{job.enqueued_at}: job {job.id} added to queue. {len(q)} tasks in queue."
+    else:
+        return f"{len(q)} tasks in queue."
+
+
 @app.route('/pixie/api/v1.0/show_image', methods=['GET'])
 def show_image():
     global matrix, offscreen_canvas
@@ -96,7 +105,6 @@ def show_sprite():
 
     image = Image.open(filename)
     cropped_image = image.crop((x1, y1, x2, y2))
-    # just in case it's bigger than 32x32
     cropped_image.thumbnail((32, 32), Image.ANTIALIAS)
     cropped_image = cropped_image.convert("RGB")
     offscreen_canvas.SetImage(cropped_image, unsafe=False)
@@ -114,11 +122,11 @@ def upload_image():
         if file_ext not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-        # Permission denied if you don't close the file?
         uploaded_file.close()
-    # return jsonify({"succes": True})
-    # don't do this to allow multiple?
-    return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
+    if file_ext == 'gif':
+        return redirect('/pixie/api/v1.0/show_gif?filename=cache/'+filename)
+    else:
+        return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
 
 
 # WWW Routes
@@ -146,12 +154,22 @@ def show_queue():
     # return render_template('queue.html')
 
 
-# Utility functions
+# Task functions
 def fake_task(n):
     print(f"Task started. Delaying {n} seconds")
     time.sleep(n)
     print("Complete")
     return n
+
+
+def panel_gif(filename):
+    global matrix, offscreen_canvas
+    image = Image.open(filename)
+    for frame in range(0, image.n_frames):
+       print(image.n_frames)
+       image.seek(frame)
+       matrix.SetImage(image.convert('RGB'))
+       time.sleep(1)
 
 
 if __name__ == '__main__':
