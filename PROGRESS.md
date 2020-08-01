@@ -10,6 +10,7 @@ Hardware: Raspberry pi 3 (1GB) with Adafruit RGBHat
 
 `sudo sysctl status rqworker@1`
 
+```bash
 ● rqworker@1.service - RQ Worker Number 1
      Loaded: loaded (/etc/systemd/system/rqworker@.service; disabled; vendor preset: enabled)
      Active: active (running) since Sat 2020-08-01 19:56:02 UTC; 328ms ago
@@ -17,6 +18,7 @@ Hardware: Raspberry pi 3 (1GB) with Adafruit RGBHat
       Tasks: 1 (limit: 1827)
      CGroup: /system.slice/system-rqworker.slice/rqworker@1.service
              └─6121 /usr/bin/python3 /home/ubuntu/.local/bin/rq worker -c pixie-led.py
+```
 
 Seems fine
 
@@ -37,6 +39,7 @@ Task gets enqueued...
 
 `sudo sysctl status rqworker@1`
 
+```bash
 ● rqworker@1.service - RQ Worker Number 1
      Loaded: loaded (/etc/systemd/system/rqworker@.service; disabled; vendor preset: enabled)
      Active: activating (auto-restart) (Result: exit-code) since Sat 2020-08-01 19:58:48 UTC; 116ms ago
@@ -54,8 +57,10 @@ Aug 01 19:58:48 ubuntu systemd[1]: Started RQ Worker Number 1.
       Tasks: 2 (limit: 1827)
      CGroup: /system.slice/system-rqworker.slice/rqworker@1.service
              └─6812 /usr/bin/python3 /home/ubuntu/.local/bin/rq worker -c pixie-led.py
+```
 
 `redis-cli`
+```bash
 127.0.0.1:6379> keys *
  1) "test"
  2) "rq:job:076edf07-700d-4f52-af0a-351321b41579"
@@ -69,10 +74,13 @@ Aug 01 19:58:48 ubuntu systemd[1]: Started RQ Worker Number 1.
 10) "rq:job:7e670aa7-053a-4375-9bf6-8b954e341b31"
 11) "rq:queues"
 127.0.0.1:6379>
+```
 
 OK... so the python file the worker "runs" is it's config file...
 
-```
+```python
 REDIS_URL = 'redis://localhost:6379/1'
 QUEUES = ['high', 'default', 'low']
 ```
+
+No idea how the path works for loading this file, but ignoring the problem and _not_ loading a config seems to pick the correct default.... F*** it, rolling with it.
