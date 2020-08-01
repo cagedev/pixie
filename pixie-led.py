@@ -147,8 +147,8 @@ def show_queue():
 def fake_task(n):
     print(f"Task started. Delaying {n} seconds")
     time.sleep(n)
-    print(" Complete")
-    pass
+    print("Complete")
+    return n
 
 
 if __name__ == '__main__':
