@@ -18,7 +18,7 @@ app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 
 # Config for Redis
 r = redis.Redis()
-q = Queue(connection)
+q = Queue(connection=r)
 
 # Config for RGBMatrix
 options = RGBMatrixOptions()
