@@ -8,8 +8,8 @@ Hardware: Raspberry pi 3 (1GB) with Adafruit RGBHat
 
 ### rq worker
 
-```bash
-$ sudo sysctl status rqworker@1
+```console
+ubuntu@ubuntu:~/pixie$ sudo sysctl status rqworker@1
 ● rqworker@1.service - RQ Worker Number 1
      Loaded: loaded (/etc/systemd/system/rqworker@.service; disabled; vendor preset: enabled)
      Active: active (running) since Sat 2020-08-01 19:56:02 UTC; 328ms ago
@@ -21,8 +21,8 @@ $ sudo sysctl status rqworker@1
 
 Seems fine
 
-```bash
-$ rqinfo
+```console
+ubuntu@ubuntu:~/pixie$ rqinfo
 default      |███████ 7
 1 queues, 7 jobs total
 0 workers, 1 queues
@@ -37,9 +37,8 @@ Why zero workers...?
 
 Task gets enqueued...
 
-`sudo sysctl status rqworker@1`
-
-```bash
+```console
+ubuntu@ubuntu:~/pixie$ sudo sysctl status rqworker@1
 ● rqworker@1.service - RQ Worker Number 1
      Loaded: loaded (/etc/systemd/system/rqworker@.service; disabled; vendor preset: enabled)
      Active: activating (auto-restart) (Result: exit-code) since Sat 2020-08-01 19:58:48 UTC; 116ms ago
@@ -59,8 +58,8 @@ Aug 01 19:58:48 ubuntu systemd[1]: Started RQ Worker Number 1.
              └─6812 /usr/bin/python3 /home/ubuntu/.local/bin/rq worker -c pixie-led.py
 ```
 
-`redis-cli`
-```bash
+```console
+ubuntu@ubuntu:~/pixie$ redis-cli
 127.0.0.1:6379> keys *
  1) "test"
  2) "rq:job:076edf07-700d-4f52-af0a-351321b41579"
