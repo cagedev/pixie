@@ -135,3 +135,5 @@ For now we'll go with the optimized viewer as a semi-dedicated background task.
 ```python
 os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5 --led-limit-refresh=200 --led-pwm-lsb-nanoseconds=200")
 ```
+
+It still seems pretty glitchy. Either realtime patching for the kernel 
