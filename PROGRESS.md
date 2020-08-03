@@ -128,3 +128,10 @@ sudo nano /boot/firmware/cmdline.txt
 
 Now to check performance...
 
+Still glitchy... possibly just go for the (cached) stream creation and then playback as a separate callback task.
+
+For now we'll go with the optimized viewer as a semi-dedicated background task.
+
+```python
+os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5 --led-limit-refresh=200 --led-pwm-lsb-nanoseconds=200")
+```
