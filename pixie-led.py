@@ -31,10 +31,9 @@ options.chain_length = 1
 options.parallel = 1
 options.hardware_mapping = 'adafruit-hat'
 options.disable_hardware_pulsing = False  # default: False
-options.pwm_bits = 8  # default: 11
-options.pwm_lsb_nanoseconds = 200  # default: 130
+options.pwm_bits = 6  # default: 11
+options.pwm_lsb_nanoseconds = 200  # default: 130; 50 blocks in workers?
 options.gpio_slowdown = 2  # default: 2
-# options.show_refresh_rate = False # True blocks workers?
 options.drop_privileges = False
 
 matrix = RGBMatrix(options=options)
