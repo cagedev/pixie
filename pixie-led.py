@@ -21,7 +21,7 @@ app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 r = redis.Redis()
 q = Queue(connection=r)
 app.config.from_object(rq_dashboard.default_settings)
-app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
+app.register_blueprint(rq_dashboard.blueprint, url_prefix="/pixie/admin/rq")
 
 # Config for RGBMatrix
 options = RGBMatrixOptions()
@@ -123,7 +123,7 @@ def upload_image():
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
         uploaded_file.close()
-        if file_ext.lower() == 'gif':
+        if file_ext.lower() == '.gif':
             return redirect('/pixie/api/v1.0/show_gif?filename=cache/'+filename)
         else:
             return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
