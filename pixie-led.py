@@ -32,7 +32,7 @@ options.parallel = 1
 options.hardware_mapping = 'adafruit-hat-pwm'
 options.disable_hardware_pulsing = False  # default: False
 options.pwm_bits = 6  # default: 11
-options.pwm_lsb_nanoseconds = 200  # default: 130; 50 blocks in workers?
+options.pwm_lsb_nanoseconds = 300  # default: 130; 50 blocks in workers?
 options.gpio_slowdown = 2  # default: 2
 options.drop_privileges = False
 
@@ -165,15 +165,16 @@ def fake_task(n):
 
 
 def panel_gif(filename, loop=10, delay=0.2):
-    global matrix, offscreen_canvas
-    image = Image.open(filename)
-    for l in range(loop):
-        for frame in range(0, image.n_frames):
-            image.seek(frame)
-            offscreen_canvas.SetImage(image.convert('RGB'), unsafe=False)
-            offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
-            matrix.SetImage(image.convert('RGB'))
-            time.sleep(delay)
+    os.system("sudo ~/rpi-rgb-led-matrix/examples-api-use/demo -t 10 -D 0 --led-hardware-pulse --led-pwm-bits=11 --led-gpio-mapping=adafruit-hat-pwm --led-panel-type=FM6126A --led-pwm-lsb-nanoseconds=50")
+    # global matrix, offscreen_canvas
+    # image = Image.open(filename)
+    # for l in range(loop):
+    #     for frame in range(0, image.n_frames):
+    #         image.seek(frame)
+    #         offscreen_canvas.SetImage(image.convert('RGB'), unsafe=False)
+    #         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+    #         matrix.SetImage(image.convert('RGB'))
+    #         time.sleep(delay)
 
 
 if __name__ == '__main__':
