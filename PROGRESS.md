@@ -83,3 +83,48 @@ QUEUES = ['high', 'default', 'low']
 ```
 
 No idea how the path works for loading this file, but ignoring the problem and _not_ loading a config seems to pick the correct default.... F*** it, rolling with it.
+
+Picture is messed up when offloaded to background task. Probably due to multitasking on core. Tried setting higher gpio / cpu priorities:
+
+```console
+ sudo nano /etc/systemd/system/rqworker@.service
+```
+
+```config
+[Unit]
+Description=RQ Worker Number %i
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/pixie
+Environment=LANG=en_US.UTF-8
+Environment=LC_ALL=en_US.UTF-8
+Environment=LC_LANG=en_US.UTF-8
+ExecStart= /home/ubuntu/.local/bin/rq worker
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+Restart=always
+User=root
+CPUAffinity=3
+CPUQuota=100%
+CPUWeight=10000
+IOWeight=10000
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Also set dedicated CPU affinity and isolate that CPU with 
+
+```console
+sudo nano /boot/firmware/cmdline.txt
+```
+
+```config
+... isolcpu=3
+```
+
+Now to check performance...
+
