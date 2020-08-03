@@ -123,10 +123,12 @@ def upload_image():
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
         uploaded_file.close()
-    if file_ext == 'gif':
-        return redirect('/pixie/api/v1.0/show_gif?filename=cache/'+filename)
+        if file_ext.lower() == 'gif':
+            return redirect('/pixie/api/v1.0/show_gif?filename=cache/'+filename)
+        else:
+            return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
     else:
-        return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
+        return url_for('upload')
 
 
 # WWW Routes
@@ -162,14 +164,16 @@ def fake_task(n):
     return n
 
 
-def panel_gif(filename):
+def panel_gif(filename, loop=10, delay=1):
     global matrix, offscreen_canvas
     image = Image.open(filename)
-    for frame in range(0, image.n_frames):
-       print(image.n_frames)
-       image.seek(frame)
-       matrix.SetImage(image.convert('RGB'))
-       time.sleep(1)
+    for l in range(loop):
+        for frame in range(0, image.n_frames):
+            image.seek(frame)
+            offscreen_canvas.SetImage(image.convert('RGB'), unsafe=False)
+            offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+            matrix.SetImage(image.convert('RGB'))
+            time.sleep(delay)
 
 
 if __name__ == '__main__':
