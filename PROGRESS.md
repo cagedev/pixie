@@ -136,4 +136,4 @@ For now we'll go with the optimized viewer as a semi-dedicated background task.
 os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5 --led-limit-refresh=200 --led-pwm-lsb-nanoseconds=200")
 ```
 
-It still seems pretty glitchy. Either realtime patching for the kernel 
+Extra options seem to cause it to stay in the loop. It still seems pretty glitchy. Either realtime patching for the kernel or run the panel process as the main process and use an extremely lightweight server. MQTT with all the lifting on the client?
