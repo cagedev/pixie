@@ -165,7 +165,7 @@ def fake_task(n):
 
 
 def panel_gif(filename, loop=10, delay=0.2):
-    os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/examples-api-use/demo -t 10 -D 0 --led-hardware-pulse --led-pwm-bits=11 --led-gpio-mapping=adafruit-hat-pwm --led-panel-type=FM6126A --led-pwm-lsb-nanoseconds=50")
+    os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif")
     # global matrix, offscreen_canvas
     # image = Image.open(filename)
     # for l in range(loop):
