@@ -165,7 +165,7 @@ def fake_task(n):
 
 
 def panel_gif(filename, loop=10, delay=0.2):
-    os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif")
+    os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5")
     # global matrix, offscreen_canvas
     # image = Image.open(filename)
     # for l in range(loop):
