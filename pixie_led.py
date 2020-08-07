@@ -67,8 +67,8 @@ def enqueue_gif():
 @app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
 def show_gif():
     filename = request.args.get('filename', './img/blank.png')
-    loop = int(request.args.get('loop', '10'))
-    delay = float(request.args.get('delay', '0.2'))
+    loop = int(request.args.get('loop', '2'))
+    delay = float(request.args.get('delay', '0.05'))
     panel_gif(filename, loop=loop, delay=delay)
     return jsonify({'success': True, 'image_file': filename})
 
@@ -191,7 +191,7 @@ def fake_task(n):
 
 
 # Panel display functions
-def panel_gif(filename, loop=2, delay=0.05):
+def panel_gif(filename, loop=1, delay=0.1):
     # os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5")
     global matrix, offscreen_canvas
     image = Image.open(filename)
