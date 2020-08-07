@@ -64,7 +64,7 @@ def enqueue_gif():
         return f"{len(q)} tasks in queue."
 
 
-@app.route('/pixie/api/v1.0/show_image', methods=['GET'])
+@app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
 def show_gif():
     filename = request.args.get('filename', './img/blank.png'):
     panel_gif(filename, loop=10, delay=0.2)
