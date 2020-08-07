@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Files</title>
+  </head>
+  <body>
+    <h1>Uploaded Files</h1>
+
+    <ol>
+      {%for f in files%} 
+        <li><a href="./api/v1.0/show_image?filename={{f}}">{{ f }} </a></li>
+      {%endfor%}
+    </ol> 
+
+    </form>
+  </body>
+</html>

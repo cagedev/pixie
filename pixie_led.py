@@ -4,61 +4,45 @@ from werkzeug.utils import secure_filename
 import sys
 import time
 import os
+import redis
+from rq import Queue
+import rq_dashboard
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 
 
+# Config for Flask
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # max 10MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
-app.config['UPLOAD_PATH'] = '/home/ubuntu/pixie/cache'
+app.config['UPLOAD_PATH'] = '/root/pixie/cache'
+app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 
+# Config for Redis
+r = redis.Redis()
+q = Queue(connection=r)
+app.config.from_object(rq_dashboard.default_settings)
+app.register_blueprint(rq_dashboard.blueprint, url_prefix="/pixie/admin/rq")
 
-# prevent connection being reset during file upload ?
-# from : https://www.cocept.io/blog/development/flask-file-upload-connection-reset/
-# from werkzeug.wsgi import LimitedStream
-# class StreamConsumingMiddleware(object):
-
-#     def __init__(self, app):
-#         self.app = app
-
-#     def __call__(self, environ, start_response):
-#         stream = LimitedStream(environ['wsgi.input'],
-#                                int(environ['CONTENT_LENGTH'] or 0))
-#         environ['wsgi.input'] = stream
-#         app_iter = self.app(environ, start_response)
-#         try:
-#             stream.exhaust()
-#             for event in app_iter:
-#                 yield event
-#         finally:
-#             if hasattr(app_iter, 'close'):
-#                 app_iter.close()
-# app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
-
-
-# Configuration for the matrix
+# Config for RGBMatrix
 options = RGBMatrixOptions()
 options.rows = 32
 options.cols = 32
 options.chain_length = 1
 options.parallel = 1
-options.hardware_mapping = 'adafruit-hat'
-options.disable_hardware_pulsing = False #default: False
-options.pwm_bits = 8 # default: 11
-options.pwm_lsb_nanoseconds = 200 # default: 130
-options.gpio_slowdown = 3 #default: 2
+options.hardware_mapping = 'adafruit-hat-pwm'
+options.disable_hardware_pulsing = False  # default: False
+options.pwm_bits = 6  # default: 11
+options.pwm_lsb_nanoseconds = 300  # default: 130; 50 blocks in workers?
+options.gpio_slowdown = 1  # default: 1
 options.drop_privileges = False
 
 matrix = RGBMatrix(options=options)
 offscreen_canvas = matrix.CreateFrameCanvas()
 
-# @app.route('')
 
 # API Routes
-
-
 @app.route('/pixie/api/v1.0/fill', methods=['GET'])
 def set_color():
     global offscreen_canvas, matrix
@@ -69,6 +53,24 @@ def set_color():
     offscreen_canvas.Fill(r, g, b)
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
     return jsonify({"success": True, 'r': r, 'g': g, 'b': b})
+
+
+@app.route('/pixie/api/v1.0/enqueue_gif', methods=['GET'])
+def enqueue_gif():
+    if request.args.get('filename'):
+        job = q.enqueue(panel_gif, request.args.get('filename'))
+        return f"{job.enqueued_at}: job {job.id} added to queue. {len(q)} tasks in queue."
+    else:
+        return f"{len(q)} tasks in queue."
+
+
+@app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
+def show_gif():
+    filename = request.args.get('filename', './img/blank.png')
+    loop = int(request.args.get('loop', '10'))
+    delay = float(request.args.get('delay', '0.2'))
+    panel_gif(filename, loop=loop, delay=delay)
+    return jsonify({'success': True, 'image_file': filename})
 
 
 @app.route('/pixie/api/v1.0/show_image', methods=['GET'])
@@ -88,7 +90,6 @@ def show_sprite():
     global matrix, offscreen_canvas
 
     # filename, margin-top, margin-left, padding-top, padding-left, column, row,
-    # bad default?
     filename = request.args.get('filename', default='./cache/sf-portraits.png')
 
     margin_top = int(request.args.get('margin-top', default=1))
@@ -114,8 +115,7 @@ def show_sprite():
         y2 = y1 + height
 
     image = Image.open(filename)
-    cropped_image = image.crop( (x1, y1, x2, y2) )
-    # just in case it's bigger than 32x32
+    cropped_image = image.crop((x1, y1, x2, y2))
     cropped_image.thumbnail((32, 32), Image.ANTIALIAS)
     cropped_image = cropped_image.convert("RGB")
     offscreen_canvas.SetImage(cropped_image, unsafe=False)
@@ -133,11 +133,13 @@ def upload_image():
         if file_ext not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-        # Permission denied if you don't close the file?
         uploaded_file.close()
-    # return jsonify({"succes": True})
-    # don't do this to allow multiple?
-    return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
+        if file_ext.lower() == '.gif':
+            return redirect('/pixie/api/v1.0/show_gif?filename=cache/'+filename)
+        else:
+            return redirect('/pixie/api/v1.0/show_image?filename=cache/'+filename)
+    else:
+        return url_for('upload')
 
 
 # WWW Routes
@@ -147,7 +149,42 @@ def upload():
 
 @app.route('/pixie/list', methods=['GET'])
 def show_list():
-    return render_template('list.html')
+    files = []
+    for directory in app.config['IMAGE_FILE_DIRS']:
+        files.extend([os.path.join(directory, file)
+                      for file in os.listdir(directory)])
+    return render_template('list.html', files=files)
+
+
+@app.route('/pixie/queue', methods=['GET'])
+def show_queue():
+    if request.args.get('n'):
+        job = q.enqueue(fake_task, int(request.args.get('n')))
+        return f"{job.enqueued_at}: job {job.id} added to queue. {len(q)} tasks in queue."
+    else:
+        return f"{len(q)} tasks in queue."
+    # return render_template('queue.html')
+
+
+# Task functions
+def fake_task(n):
+    print(f"Task started. Delaying {n} seconds")
+    time.sleep(n)
+    print("Complete")
+    return n
+
+
+def panel_gif(filename, loop=10, delay=0.2):
+    # os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5")
+    global matrix, offscreen_canvas
+    image = Image.open(filename)
+    for l in range(loop):
+        for frame in range(0, image.n_frames):
+            image.seek(frame)
+            offscreen_canvas.SetImage(image.convert('RGB'), unsafe=False)
+            offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+            matrix.SetImage(image.convert('RGB'))
+            time.sleep(delay)
 
 
 if __name__ == '__main__':
