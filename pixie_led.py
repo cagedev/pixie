@@ -33,7 +33,7 @@ options.hardware_mapping = 'adafruit-hat-pwm'
 options.disable_hardware_pulsing = False  # default: False
 options.pwm_bits = 6  # default: 11
 options.pwm_lsb_nanoseconds = 300  # default: 130; 50 blocks in workers?
-options.gpio_slowdown = 2  # default: 2
+options.gpio_slowdown = 1  # default: 1
 options.drop_privileges = False
 
 matrix = RGBMatrix(options=options)
