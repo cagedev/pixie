@@ -165,16 +165,16 @@ def fake_task(n):
 
 
 def panel_gif(filename, loop=10, delay=0.2):
-    os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5")
-    # global matrix, offscreen_canvas
-    # image = Image.open(filename)
-    # for l in range(loop):
-    #     for frame in range(0, image.n_frames):
-    #         image.seek(frame)
-    #         offscreen_canvas.SetImage(image.convert('RGB'), unsafe=False)
-    #         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
-    #         matrix.SetImage(image.convert('RGB'))
-    #         time.sleep(delay)
+    # os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5")
+    global matrix, offscreen_canvas
+    image = Image.open(filename)
+    for l in range(loop):
+        for frame in range(0, image.n_frames):
+            image.seek(frame)
+            offscreen_canvas.SetImage(image.convert('RGB'), unsafe=False)
+            offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+            matrix.SetImage(image.convert('RGB'))
+            time.sleep(delay)
 
 
 if __name__ == '__main__':
