@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request, render_template, redirect, url_for, abort
+from flask import Flask, jsonify, request, render_template, redirect, url_for, abort, send_from_directory
 from werkzeug.utils import secure_filename
 import sys
 import time
@@ -172,6 +172,16 @@ def show_queue():
     # return render_template('queue.html')
 
 
+# Static routes (Flask.send_from_directory)
+@app.route('/pixie/img/<path>/<filename>', methods=['GET'])
+def serve_image(path, filename):
+    if path in app.config['IMAGE_FILE_DIRS']:
+        return send_from_directory(path, filename) # need secure_filename?
+        # os.path.join(path, secure_filename(filename))
+    else:
+        abort(403)
+
+
 # Task functions
 def fake_task(n):
     print(f"Task started. Delaying {n} seconds")
@@ -180,7 +190,8 @@ def fake_task(n):
     return n
 
 
-def panel_gif(filename, loop=10, delay=0.2):
+# Panel display functions
+def panel_gif(filename, loop=2, delay=0.05):
     # os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5")
     global matrix, offscreen_canvas
     image = Image.open(filename)
