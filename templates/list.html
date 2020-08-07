@@ -9,7 +9,7 @@
     <ol>
       {%for file in files%} 
         <li>
-          <a onclick='showImage("./api/v1.0/show_image?filename={{file.filename}}")'>{{ file.filename }} </a>
+          <a href="" onclick="showImage('./api/v1.0/show_image?filename={{file.filename}}')">{{ file.filename }} </a>
         </li>
       {%endfor%}
     </ol> 
