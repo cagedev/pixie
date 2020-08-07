@@ -10,12 +10,10 @@
       {% for file in files %} 
         <li>
           {{ file.filename }}
-          {{% if file.extension is '.png' %}}
             <a class="" onclick="showImage('./api/v1.0/show_image?filename={{file.filename}}')">
               [ showImage() ]
             </a>
-          {{% endif %}}
-          {{% if file.extension is '.gif' %}}
+          {{% if file.extension == '.gif' %}}
             <a class="" onclick="showGif('./api/v1.0/show_gif?filename={{file.filename}}')">
               [ showGif() ]
             </a>
