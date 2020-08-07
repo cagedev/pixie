@@ -188,7 +188,5 @@ def panel_gif(filename, loop=10, delay=0.2):
             time.sleep(delay)
 
 
-def panel_image()
-
 if __name__ == '__main__':
     app.run(debug=True)
