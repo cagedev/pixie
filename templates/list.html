@@ -10,7 +10,7 @@
       {% for file in files %}
       <li>
         {{ file.filename }}
-        <img src="./img/{{file.filename}}" />
+        <img src="./img/{{file.filename}}" height="32" />
         <a
           onclick="showImage('./api/v1.0/show_image?filename={{file.filename}}')"
         >
