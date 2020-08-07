@@ -16,7 +16,7 @@ from PIL import Image
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # max 10MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
-app.config['UPLOAD_PATH'] = '/root/pixie/cache'
+app.config['UPLOAD_PATH'] = '/root/pixie/cache' # TODO: make this relative
 app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 
 # Config for Redis
@@ -146,6 +146,7 @@ def upload_image():
 @app.route('/pixie/upload', methods=['GET', 'POST'])
 def upload():
     return render_template('upload.html')
+
 
 @app.route('/pixie/list', methods=['GET'])
 def show_list():

@@ -8,10 +8,20 @@
 
     <ol>
       {%for file in files%} 
-        <li><a href="./api/v1.0/show_image?filename={{file.filename}}">{{ file.filename }} </a></li>
+        <li>
+          <a onclick='showImage("./api/v1.0/show_image?filename={{file.filename}}")'>{{ file.filename }} </a>
+        </li>
       {%endfor%}
     </ol> 
 
     </form>
+    <script>
+      function showImage(uri) {
+        var req = new XMLHttpRequest();
+        req.addEventListener('load', console.log(this) );
+        req.open('GET', uri);
+        req.send();
+      };
+    </script>
   </body>
 </html>
