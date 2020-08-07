@@ -67,7 +67,10 @@ def enqueue_gif():
 @app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
 def show_gif():
     filename = request.args.get('filename', './img/blank.png')
-    panel_gif(filename, loop=10, delay=0.2)
+    loop = int(request.args.get('loop', '10'))
+    delay = float(request.args.get('delay', '0.2'))
+    panel_gif(filename, loop=loop, delay=delay)
+    return jsonify({'success': True, 'image_file': filename})
 
 
 @app.route('/pixie/api/v1.0/show_image', methods=['GET'])
@@ -184,6 +187,8 @@ def panel_gif(filename, loop=10, delay=0.2):
             matrix.SetImage(image.convert('RGB'))
             time.sleep(delay)
 
+
+def panel_image()
 
 if __name__ == '__main__':
     app.run(debug=True)
