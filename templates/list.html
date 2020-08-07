@@ -25,7 +25,7 @@
     <script>
       function showImage(uri) {
         var req = new XMLHttpRequest();
-        req.addEventListener('load', console.log(this) );
+        req.addEventListener('load', console.log(this.responseText) );
         req.open('GET', uri);
         req.send();
       };
