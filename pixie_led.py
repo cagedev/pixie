@@ -1,7 +1,9 @@
 #!flask/bin/python
 from flask import Flask, jsonify, request, render_template, redirect, url_for, abort
 from werkzeug.utils import secure_filename
-import sys, time, os
+import sys
+import time
+import os
 import redis
 from rq import Queue
 import rq_dashboard
@@ -53,13 +55,19 @@ def set_color():
     return jsonify({"success": True, 'r': r, 'g': g, 'b': b})
 
 
-@app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
-def show_gif():
+@app.route('/pixie/api/v1.0/enqueue_gif', methods=['GET'])
+def enqueue_gif():
     if request.args.get('filename'):
         job = q.enqueue(panel_gif, request.args.get('filename'))
         return f"{job.enqueued_at}: job {job.id} added to queue. {len(q)} tasks in queue."
     else:
         return f"{len(q)} tasks in queue."
+
+
+@app.route('/pixie/api/v1.0/show_image', methods=['GET'])
+def show_gif():
+    filename = request.args.get('filename', './img/blank.png'):
+    panel_gif(filename, loop=10, delay=0.2)
 
 
 @app.route('/pixie/api/v1.0/show_image', methods=['GET'])
