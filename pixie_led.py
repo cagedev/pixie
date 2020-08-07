@@ -11,6 +11,35 @@ import rq_dashboard
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 
+# TODO: Refactor
+# Move redis to seperate file.
+# Split preparation and cached files (for display)
+# Seperate panel operations to a seperate package
+# Don't hardcode config -> load from startup script with ENV
+# Implement modes (with admin override)
+#   GIFBoard - Soundboard style gif collection
+#   Designer - Utility interface for creating animations. Mostly client side.
+#     Crop
+#     Timeline
+#     Touchup
+#     Messages? (possible on secondary pixel array)
+#   PixelBoard - Websocket pixel MSPaint
+# Utility
+#   Multifile upload & drag-n-drop
+#   File management
+# User management
+#   User login
+#   Admin interface
+#   User execution permissions
+# Clean up API
+# Clean up basic templates
+#   Navigation
+#   CSS
+# Refactor to multiple files
+# Get resources
+#   Shining force sprite sheets?
+#   Remove testing data
+
 
 # Config for Flask
 app = Flask(__name__)
