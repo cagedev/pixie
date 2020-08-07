@@ -155,8 +155,8 @@ def show_list():
             filename = os.path.join(directory, file)
             extension = os.path.splitext(filename)[1].lower()
             files.append({
-                filename: filename,
-                extension: extension,
+                'filename': filename,
+                'extension': extension,
             })
     return render_template('list.html', files=files)
 
