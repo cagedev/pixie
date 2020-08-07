@@ -151,7 +151,7 @@ def upload():
 def show_list():
     files = []
     for directory in app.config['IMAGE_FILE_DIRS']:
-        for file in os.listdir(directory)]):
+        for file in os.listdir(directory):
             filename = os.path.join(directory, file)
             extension = os.path.splitext(fullname)[1].lower()
             files.append({
