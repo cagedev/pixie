@@ -66,7 +66,7 @@ def enqueue_gif():
 
 @app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
 def show_gif():
-    filename = request.args.get('filename', './img/blank.png'):
+    filename = request.args.get('filename', './img/blank.png')
     panel_gif(filename, loop=10, delay=0.2)
 
 
