@@ -13,11 +13,11 @@
             <a class="" onclick="showImage('./api/v1.0/show_image?filename={{file.filename}}')">
               [ showImage() ]
             </a>
-          {{% if file.extension == ".gif" %}}
+          {% if file.extension == ".gif" %}
             <a class="" onclick="showGif('./api/v1.0/show_gif?filename={{file.filename}}')">
               [ showGif() ]
             </a>
-          {{% endif %}}
+          {% endif %}
         </li>
       {% endfor %}
     </ol> 
