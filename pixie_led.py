@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request, render_template, redirect, url_for, abort
+from flask import Flask, jsonify, request, render_template, redirect, url_for, abort, send_from_directory
 from werkzeug.utils import secure_filename
 import sys
 import time
@@ -10,6 +10,35 @@ import rq_dashboard
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
+
+# TODO: Refactor
+# Move redis to seperate file.
+# Split preparation and cached files (for display)
+# Seperate panel operations to a seperate package
+# Don't hardcode config -> load from startup script with ENV
+# Implement modes (with admin override)
+#   GIFBoard - Soundboard style gif collection
+#   Designer - Utility interface for creating animations. Mostly client side.
+#     Crop
+#     Timeline
+#     Touchup
+#     Messages? (possible on secondary pixel array)
+#   PixelBoard - Websocket pixel MSPaint
+# Utility
+#   Multifile upload & drag-n-drop
+#   File management
+# User management
+#   User login
+#   Admin interface
+#   User execution permissions
+# Clean up API
+# Clean up basic templates
+#   Navigation
+#   CSS
+# Refactor to multiple files
+# Get resources
+#   Shining force sprite sheets?
+#   Remove testing data
 
 
 # Config for Flask
@@ -67,8 +96,8 @@ def enqueue_gif():
 @app.route('/pixie/api/v1.0/show_gif', methods=['GET'])
 def show_gif():
     filename = request.args.get('filename', './img/blank.png')
-    loop = int(request.args.get('loop', '10'))
-    delay = float(request.args.get('delay', '0.2'))
+    loop = int(request.args.get('loop', '2'))
+    delay = float(request.args.get('delay', '0.05'))
     panel_gif(filename, loop=loop, delay=delay)
     return jsonify({'success': True, 'image_file': filename})
 
@@ -172,6 +201,16 @@ def show_queue():
     # return render_template('queue.html')
 
 
+# Static routes (Flask.send_from_directory)
+@app.route('/pixie/img/<path>/<filename>', methods=['GET'])
+def serve_image(path, filename):
+    if path in app.config['IMAGE_FILE_DIRS']:
+        return send_from_directory(path, filename) # need secure_filename?
+        # os.path.join(path, secure_filename(filename))
+    else:
+        abort(403)
+
+
 # Task functions
 def fake_task(n):
     print(f"Task started. Delaying {n} seconds")
@@ -180,7 +219,8 @@ def fake_task(n):
     return n
 
 
-def panel_gif(filename, loop=10, delay=0.2):
+# Panel display functions
+def panel_gif(filename, loop=1, delay=0.1):
     # os.system("sudo /home/ubuntu/rpi-rgb-led-matrix/utils/led-image-viewer /home/ubuntu/pixie/cache/temp3.gif -t 5")
     global matrix, offscreen_canvas
     image = Image.open(filename)
