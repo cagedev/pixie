@@ -14,7 +14,7 @@ from PIL import Image
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # max 10MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
-app.config['UPLOAD_PATH'] = '/home/ubuntu/pixie/cache'
+app.config['UPLOAD_PATH'] = '/root/pixie/cache'
 app.config['IMAGE_FILE_DIRS'] = ['img', 'cache']
 
 # Config for Redis
