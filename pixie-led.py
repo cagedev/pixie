@@ -145,7 +145,7 @@ def upload_image():
 def upload():
     return render_template('upload.html')
 
-@app.route('/pixie/list', method=['GET'])
+@app.route('/pixie/list', methods=['GET'])
 def show_list():
     return render_template('list.html')
 
