@@ -153,7 +153,7 @@ def show_list():
     for directory in app.config['IMAGE_FILE_DIRS']:
         for file in os.listdir(directory):
             filename = os.path.join(directory, file)
-            extension = os.path.splitext(fullname)[1].lower()
+            extension = os.path.splitext(filename)[1].lower()
             files.append({
                 filename: filename,
                 extension: extension,
